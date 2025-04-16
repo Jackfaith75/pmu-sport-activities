@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Nom",
+    "description": "description",
+    "date": "2025-04-19",
+    "time": "20:08",
+    "location": "location",
+    "maxParticipants": "6",
+    "organizer": "Organizer",
+    "id": "1744733207251",
+    "registered": 4
+  }
+]

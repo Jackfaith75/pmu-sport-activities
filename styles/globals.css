@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🎨 Thème global PMU */
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+  }
+
+  h1, h2, h3 {
+    @apply text-[#00553A] font-bold;
+  }
+
+  a {
+    @apply text-[#00553A] hover:text-[#007C55] transition duration-200;
+  }
+
+  input, textarea, select {
+    @apply border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00553A];
+  }
+
+  button:not(.unstyled) {
+    @apply bg-[#00553A] text-white px-4 py-2 rounded font-semibold transition duration-200 shadow;
+  }
+  
+  button:not(.unstyled):hover {
+    background-color: #007C55;
+  }
+
+  table {
+    @apply text-sm;
+  }
+}
