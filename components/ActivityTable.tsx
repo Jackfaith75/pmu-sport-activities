@@ -62,7 +62,7 @@ export default function ActivityTable() {
         <thead className="bg-[#00553A] text-white">
           <tr>
             <th className="p-3"></th>
-            <th className="p-3 text-left">Nom</th>
+            <th className="p-3 text-left">Activité</th>
             <th className="p-3 text-left">Date</th>
             <th className="p-3 text-left">Heure</th>
             <th className="p-3 text-left">Lieu</th>
