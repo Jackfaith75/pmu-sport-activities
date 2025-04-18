@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import ActivityModal from './ActivityModal';
-import AddActivityModal from './AddActivityModal';
 
 interface Activity {
   id: string;
@@ -20,27 +19,19 @@ export default function Calendar() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false); // 🔧 nouvel état pour la modale d’ajout
 
-  // Fonction pour charger les activités
-  const fetchActivities = () => {
+  useEffect(() => {
     fetch('/api/with-registrations')
       .then(res => res.json())
       .then(data => setActivities(data));
-  };
-
-  useEffect(() => {
-    fetchActivities();
   }, []);
 
-  // Préparer les événements pour FullCalendar
   const events = activities.map(act => ({
     id: act.id,
     title: act.name,
-    date: act.date.split('T')[0], // 🛠️ on garde uniquement la date (pas l'heure)
+    date: act.date.split('T')[0], // 🛠️ S'assure que seul le jour est pris
   }));
 
-  // Ouvrir la modale d'une activité depuis le calendrier
   const handleEventClick = (info: any) => {
     const act = activities.find(a => a.id === info.event.id);
     if (act) {
@@ -55,17 +46,6 @@ export default function Calendar() {
 
   return (
     <div className="mt-10 p-4 bg-white border border-gray-200 rounded-lg shadow-md">
-      {/* ➕ Bouton pour ouvrir la modale d'ajout */}
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-[#00553A] hover:bg-[#007C55] text-white font-bold px-4 py-2 rounded-md"
-        >
-          ➕ Ajouter une activité
-        </button>
-      </div>
-
-      {/* Calendrier */}
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
@@ -75,19 +55,11 @@ export default function Calendar() {
         height="auto"
       />
 
-      {/* Modale de consultation/modification d'une activité */}
       <ActivityModal
         activity={selectedActivity}
         show={showModal}
         onClose={handleClose}
       />
-
-      {/* Modale d'ajout avec rechargement automatique à la fermeture */}
-      <AddActivityModal
-  show={showAddModal}
-  onClose={() => setShowAddModal(false)}
-  onAdd={fetchActivities} // ✅ nouvelle prop à fournir
-/>
     </div>
   );
 }
