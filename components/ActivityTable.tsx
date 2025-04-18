@@ -24,7 +24,12 @@ export default function ActivityTable() {
   const fetchActivities = () => {
     fetch('/api/with-registrations')
       .then(res => res.json())
-      .then(data => setActivities(data));
+      .then(data => {
+  const sorted = data.sort((a: Activity, b: Activity) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
+  setActivities(sorted);
+});
   };
 
   useEffect(() => {
