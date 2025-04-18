@@ -126,34 +126,36 @@ export default function ActivityTable() {
         </tbody>
       </table>
 
-      {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 py-4">
-        <button
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          Précédent
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i + 1}
-            className={`px-3 py-1 rounded ${
-              currentPage === i + 1 ? 'bg-[#00553A] text-white' : 'bg-gray-100'
-            }`}
-            onClick={() => setCurrentPage(i + 1)}
-          >
-            {i + 1}
-          </button>
-        ))}
-        <button
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        >
-          Suivant
-        </button>
-      </div>
+{/* Pagination - style épuré */}
+<div className="flex justify-center items-center gap-1 py-3 text-sm text-gray-700">
+  <button
+    className="px-2 py-1 rounded hover:bg-gray-200 disabled:text-gray-400"
+    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+  >
+    ◀
+  </button>
+  {Array.from({ length: totalPages }, (_, i) => (
+    <button
+      key={i + 1}
+      className={`px-2 py-1 rounded transition ${
+        currentPage === i + 1
+          ? 'bg-[#00553A] text-white'
+          : 'hover:bg-gray-100 text-gray-700'
+      }`}
+      onClick={() => setCurrentPage(i + 1)}
+    >
+      {i + 1}
+    </button>
+  ))}
+  <button
+    className="px-2 py-1 rounded hover:bg-gray-200 disabled:text-gray-400"
+    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+    disabled={currentPage === totalPages}
+  >
+    ▶
+  </button>
+</div>
 
       {/* Modales */}
       <ActivityModal
