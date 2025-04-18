@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router'; // ✅ Ajout du router pour reload
 import Modal from './Modal';
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
 }
 
 export default function AddActivityModal({ show, onClose, onAdd }: Props) {
+  const router = useRouter(); // ✅ Instanciation du router
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -37,8 +40,9 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
 
     if (res.ok) {
       alert('Activité ajoutée !');
-      onAdd(); // 🔄 Recharge les activités dans ActivityTable
-      onClose(); // ❌ Ferme la modal
+      onAdd(); // Optionnel si tu veux relancer un fetch local
+      onClose(); // Ferme la modal
+      router.reload(); // ✅ Recharge toute la page
     } else {
       alert("Erreur lors de l'ajout.");
     }
@@ -128,7 +132,6 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           />
         </div>
 
-        {/* Champ récurrence (optionnel) */}
         <div>
           <label className="block font-medium">Récurrence</label>
           <select
