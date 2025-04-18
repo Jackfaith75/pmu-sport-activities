@@ -20,7 +20,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{
-            backgroundImage: `url('/images/pmu-banner.jpeg')`,
+            backgroundImage: `url('/images/pmu-banner.jpg')`,
             opacity: 0.2,
           }}
         ></div>
