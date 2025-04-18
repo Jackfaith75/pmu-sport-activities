@@ -20,16 +20,19 @@ export default function ActivityTable() {
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 6;
 
   const fetchActivities = () => {
     fetch('/api/with-registrations')
       .then(res => res.json())
       .then(data => {
-  const sorted = data.sort((a: Activity, b: Activity) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
-  setActivities(sorted);
-});
+        const sorted = data.sort((a: Activity, b: Activity) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        });
+        setActivities(sorted);
+      });
   };
 
   useEffect(() => {
@@ -48,6 +51,10 @@ export default function ActivityTable() {
     fetchActivities();
   };
 
+  const totalPages = Math.ceil(activities.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedActivities = activities.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <div className="overflow-x-auto mt-6 rounded-lg shadow-md border border-gray-200">
 
@@ -55,8 +62,7 @@ export default function ActivityTable() {
       <div className="flex justify-end p-4">
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-[#00553A] hover:bg-[#007C55] text-white font-bold px-4 py-2 rounded-full text-lg"
-          title="Ajouter une activité"
+          className="bg-[#00553A] hover:bg-[#007C55] text-white font-semibold text-base px-6 py-3 rounded-md whitespace-nowrap"
         >
           Proposer une activité
         </button>
@@ -77,7 +83,7 @@ export default function ActivityTable() {
           </tr>
         </thead>
         <tbody>
-          {activities.map((act) => (
+          {paginatedActivities.map((act) => (
             <tr
               key={act.id}
               className="border-t hover:bg-gray-100 cursor-pointer"
@@ -120,13 +126,42 @@ export default function ActivityTable() {
         </tbody>
       </table>
 
+      {/* Pagination */}
+      <div className="flex justify-center items-center gap-2 py-4">
+        <button
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Précédent
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            className={`px-3 py-1 rounded ${
+              currentPage === i + 1 ? 'bg-[#00553A] text-white' : 'bg-gray-100'
+            }`}
+            onClick={() => setCurrentPage(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Suivant
+        </button>
+      </div>
+
+      {/* Modales */}
       <ActivityModal
         activity={selectedActivity}
         show={showModal}
         onClose={handleClose}
         mode={editMode ? 'edit' : 'view'}
       />
-
       <AddActivityModal
         show={showAddModal}
         onClose={() => setShowAddModal(false)}
