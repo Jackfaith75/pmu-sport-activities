@@ -74,7 +74,6 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
     if (res.ok) {
       alert('Inscription réussie !');
       setFullName('');
-
       fetch(`/api/participants?id=${activity.id}`)
         .then(res => res.json())
         .then(data => {
@@ -111,6 +110,8 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
 
   if (!formData) return null;
 
+  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/activite/${formData.id}`;
+
   return (
     <Modal show={show} onClose={onClose}>
       <h2 className="text-xl font-bold mb-2">{formData.name}</h2>
@@ -118,6 +119,28 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         📍 {formData.location} | 🗓️ {formData.date} à {formData.time}
       </p>
       <p className="mb-4">{formData.description}</p>
+
+      {/* ✅ Bloc partage */}
+      <div className="mb-4">
+        <p className="text-sm text-gray-600 mb-1">🔗 Lien de partage :</p>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            readOnly
+            value={shareUrl}
+            className="w-full text-sm bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-600"
+          />
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(shareUrl);
+              alert('✅ Lien copié dans le presse-papiers !');
+            }}
+            className="bg-[#00553A] hover:bg-[#007C55] text-white px-3 py-1 rounded text-sm"
+          >
+            Copier
+          </button>
+        </div>
+      </div>
 
       <div className="mb-4">
         <strong>👥 {participants.length} / {formData.maxParticipants} participants</strong>
