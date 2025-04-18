@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ActivityModal from './ActivityModal';
 import AddActivityModal from './AddActivityModal';
+import { useRouter } from 'next/router';
 
 interface Activity {
   id: string;
@@ -21,6 +22,7 @@ export default function ActivityTable() {
   const [editMode, setEditMode] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
 
   const itemsPerPage = 6;
 
@@ -49,6 +51,7 @@ export default function ActivityTable() {
     setShowModal(false);
     setEditMode(false);
     fetchActivities(); // 🔁 Recharge les activités à chaque fermeture de modal
+    router.reload(); // ⬅️ recharge à la fermeture de la modal
   };
 
   const totalPages = Math.ceil(activities.length / itemsPerPage);
