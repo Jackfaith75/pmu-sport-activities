@@ -126,10 +126,10 @@ export default function ActivityTable() {
         </tbody>
       </table>
 
-{/* Pagination - style minimal avec texte vert uniquement */}
-<div className="flex justify-center items-center gap-2 py-3 text-sm text-[#00553A]">
+{/* Pagination ultra légère */}
+<div className="flex justify-center items-center gap-2 py-3 text-xs text-[#00553A]">
   <button
-    className="hover:underline disabled:text-gray-300"
+    className="text-[#00553A] disabled:text-gray-300 hover:underline"
     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
     disabled={currentPage === 1}
   >
@@ -138,22 +138,23 @@ export default function ActivityTable() {
   {Array.from({ length: totalPages }, (_, i) => (
     <button
       key={i + 1}
-      className={`hover:underline ${
-        currentPage === i + 1 ? 'font-bold text-[#00553A]' : 'text-[#00553A] opacity-70'
-      }`}
+      className={`text-[#00553A] ${
+        currentPage === i + 1 ? 'font-bold' : 'opacity-70'
+      } hover:underline`}
       onClick={() => setCurrentPage(i + 1)}
     >
       {i + 1}
     </button>
   ))}
   <button
-    className="hover:underline disabled:text-gray-300"
+    className="text-[#00553A] disabled:text-gray-300 hover:underline"
     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
     disabled={currentPage === totalPages}
   >
     ▶
   </button>
 </div>
+
 
       {/* Modales */}
       <ActivityModal
