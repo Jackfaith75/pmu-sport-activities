@@ -167,6 +167,7 @@ export default function ActivityTable() {
         show={showAddModal}
         onClose={() => setShowAddModal(false)}
         onAdd={fetchActivities}
+        onUpdate={fetchActivities}
       />
     </div>
   );
