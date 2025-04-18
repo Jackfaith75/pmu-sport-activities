@@ -16,7 +16,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     location: '',
     maxParticipants: 10,
     organizer: '',
-    recurrence: 'none', // ✅ Nouveau champ
+    recurrence: 'none',
   });
 
   const handleChange = (
@@ -37,8 +37,8 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
 
     if (res.ok) {
       alert('Activité ajoutée !');
-      onAdd();
-      onClose();
+      onAdd(); // 🔄 Recharge les activités dans ActivityTable
+      onClose(); // ❌ Ferme la modal
     } else {
       alert("Erreur lors de l'ajout.");
     }
@@ -128,7 +128,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           />
         </div>
 
-        {/* ✅ Nouveau champ de sélection de récurrence */}
+        {/* Champ récurrence (optionnel) */}
         <div>
           <label className="block font-medium">Récurrence</label>
           <select
