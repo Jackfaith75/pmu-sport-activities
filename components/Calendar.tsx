@@ -29,7 +29,7 @@ export default function Calendar() {
   const events = activities.map(act => ({
     id: act.id,
     title: act.name,
-    date: act.date,
+    date: act.date.split('T')[0], // 🛠️ S'assure que seul le jour est pris
   }));
 
   const handleEventClick = (info: any) => {
@@ -46,21 +46,19 @@ export default function Calendar() {
 
   return (
     <div className="mt-10 p-4 bg-white border border-gray-200 rounded-lg shadow-md">
-     <FullCalendar
-  plugins={[dayGridPlugin]}
-  initialView="dayGridMonth"
-  events={events}
-  eventClick={handleEventClick}
-  eventClassNames={() => 'cursor-pointer hover:bg-[#00553A] transition-all rounded-md'}
-  height="auto"
-/>
-
+      <FullCalendar
+        plugins={[dayGridPlugin]}
+        initialView="dayGridMonth"
+        events={events}
+        eventClick={handleEventClick}
+        eventClassNames={() => 'cursor-pointer hover:bg-[#00553A] transition-all rounded-md'}
+        height="auto"
+      />
 
       <ActivityModal
         activity={selectedActivity}
         show={showModal}
         onClose={handleClose}
-        mode="view"
       />
     </div>
   );
