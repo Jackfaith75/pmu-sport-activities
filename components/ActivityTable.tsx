@@ -58,7 +58,7 @@ export default function ActivityTable() {
           className="bg-[#00553A] hover:bg-[#007C55] text-white font-bold px-4 py-2 rounded-full text-lg"
           title="Ajouter une activité"
         >
-          +
+          Proposer une activité
         </button>
       </div>
 
