@@ -48,7 +48,7 @@ export default function ActivityTable() {
   const handleClose = () => {
     setShowModal(false);
     setEditMode(false);
-    fetchActivities();
+    fetchActivities(); // 🔁 Recharge les activités à chaque fermeture de modal
   };
 
   const totalPages = Math.ceil(activities.length / itemsPerPage);
@@ -126,47 +126,46 @@ export default function ActivityTable() {
         </tbody>
       </table>
 
-{/* Pagination ultra légère */}
-<div className="flex justify-center items-center gap-2 py-3 text-xs text-[#00553A]">
-  <button
-    className="text-[#00553A] disabled:text-gray-300 hover:underline"
-    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-    disabled={currentPage === 1}
-  >
-    ◀
-  </button>
-  {Array.from({ length: totalPages }, (_, i) => (
-    <button
-      key={i + 1}
-      className={`text-[#00553A] ${
-        currentPage === i + 1 ? 'font-bold' : 'opacity-70'
-      } hover:underline`}
-      onClick={() => setCurrentPage(i + 1)}
-    >
-      {i + 1}
-    </button>
-  ))}
-  <button
-    className="text-[#00553A] disabled:text-gray-300 hover:underline"
-    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-    disabled={currentPage === totalPages}
-  >
-    ▶
-  </button>
-</div>
-
+      {/* Pagination mini */}
+      <div className="flex justify-center items-center gap-2 py-3 text-xs text-[#00553A]">
+        <button
+          className="text-[#00553A] disabled:text-gray-300 hover:underline"
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          ◀
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            className={`text-[#00553A] ${
+              currentPage === i + 1 ? 'font-bold' : 'opacity-70'
+            } hover:underline`}
+            onClick={() => setCurrentPage(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          className="text-[#00553A] disabled:text-gray-300 hover:underline"
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          ▶
+        </button>
+      </div>
 
       {/* Modales */}
       <ActivityModal
         activity={selectedActivity}
         show={showModal}
-        onClose={handleClose}
+        onClose={handleClose} // 🔁 met à jour après modif
         mode={editMode ? 'edit' : 'view'}
       />
       <AddActivityModal
         show={showAddModal}
         onClose={() => setShowAddModal(false)}
-        onAdd={fetchActivities}
+        onAdd={fetchActivities} // 🔁 met à jour après ajout
       />
     </div>
   );
