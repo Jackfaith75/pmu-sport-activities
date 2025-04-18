@@ -30,7 +30,8 @@ export default function ActivityForm() {
 
     if (res.ok) {
       alert('✅ Activité ajoutée avec succès !');
-      router.push('/');
+      router.push('/'); // Redirection
+      setTimeout(() => router.reload(), 100); // 🔁 Recharge pour forcer la mise à jour du tableau
     } else {
       alert('❌ Une erreur est survenue. Merci de réessayer.');
     }
