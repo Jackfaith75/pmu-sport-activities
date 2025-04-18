@@ -30,17 +30,39 @@ export default function ActivityForm() {
 
     if (res.ok) {
       alert('✅ Activité ajoutée avec succès !');
-      router.push('/'); // ✅ redirige vers la page d’accueil
+      router.push('/');
     } else {
       alert('❌ Une erreur est survenue. Merci de réessayer.');
     }
   };
 
+  const getLabel = (field: string) => {
+    switch (field) {
+      case 'name':
+        return 'Activité proposée';
+      case 'location':
+        return 'Localisation';
+      case 'description':
+        return 'Description';
+      case 'date':
+        return 'Date';
+      case 'time':
+        return 'Heure';
+      case 'organizer':
+        return 'Organisateur';
+      default:
+        return field;
+    }
+  };
+
   return (
-    <form className="space-y-6 max-w-xl bg-white p-6 shadow-md rounded-lg mt-6" onSubmit={handleSubmit}>
+    <form
+      className="space-y-6 max-w-xl bg-white p-6 shadow-md rounded-lg mt-6"
+      onSubmit={handleSubmit}
+    >
       {['name', 'description', 'date', 'time', 'location', 'organizer'].map(field => (
         <div key={field}>
-          <label className="block capitalize font-medium mb-1">{field}</label>
+          <label className="block font-medium mb-1">{getLabel(field)}</label>
           <input
             type={field === 'date' ? 'date' : field === 'time' ? 'time' : 'text'}
             name={field}
@@ -62,7 +84,10 @@ export default function ActivityForm() {
           required
         />
       </div>
-      <button type="submit" className="bg-[#00553A] hover:bg-[#007C55] text-white px-6 py-2 rounded font-semibold shadow">
+      <button
+        type="submit"
+        className="bg-[#00553A] hover:bg-[#007C55] text-white px-6 py-2 rounded font-semibold shadow"
+      >
         Ajouter l'activité
       </button>
     </form>
