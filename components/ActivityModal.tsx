@@ -141,25 +141,77 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
 
       {mode === 'edit' ? (
         <form onSubmit={handleSubmitEdit} className="space-y-3">
-          {['name', 'description', 'date', 'time', 'location', 'organizer'].map((field) => (
-            <div key={field}>
-              <label className="capitalize block font-medium">{field}</label>
-              <input
-                className="border rounded w-full px-3 py-2"
-                type={field === 'date' ? 'date' : field === 'time' ? 'time' : 'text'}
-                name={field}
-                value={(formData as any)[field]}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          ))}
+          <div>
+            <label className="block font-medium">Activité proposée</label>
+            <input
+              className="border rounded w-full px-3 py-2"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Description</label>
+            <textarea
+              className="border rounded w-full px-3 py-2"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Date</label>
+            <input
+              className="border rounded w-full px-3 py-2"
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Heure</label>
+            <input
+              className="border rounded w-full px-3 py-2"
+              type="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Localisation</label>
+            <input
+              className="border rounded w-full px-3 py-2"
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Organisateur</label>
+            <input
+              className="border rounded w-full px-3 py-2"
+              type="text"
+              name="organizer"
+              value={formData.organizer}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <div>
             <label className="block font-medium">Participants max</label>
             <input
+              className="border rounded w-full px-3 py-2"
               type="number"
               name="maxParticipants"
-              className="border rounded w-full px-3 py-2"
               value={formData.maxParticipants}
               onChange={handleChange}
             />
