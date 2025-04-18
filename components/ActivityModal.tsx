@@ -18,7 +18,6 @@ interface Props {
   show: boolean;
   onClose: () => void;
   mode?: 'view' | 'edit';
-  onUpdate?: () => void; // ✅ Ajouté pour recharger les données
 }
 
 export default function ActivityModal({ activity, show, onClose, mode = 'view' }: Props) {
@@ -57,7 +56,6 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
     if (res.ok) {
       alert('Activité modifiée avec succès !');
       onClose();
-      onUpdate?.(); 
     } else {
       alert("Erreur lors de la modification.");
     }
