@@ -45,27 +45,79 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     <Modal show={show} onClose={onClose}>
       <h2 className="text-lg font-bold mb-4">Ajouter une activité</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
-        {['name', 'description', 'date', 'time', 'location', 'organizer'].map((field) => (
-          <div key={field}>
-            <label className="capitalize block font-medium">{field}</label>
-            <input
-              className="border rounded w-full px-3 py-2"
-              type={field === 'date' ? 'date' : field === 'time' ? 'time' : 'text'}
-              name={field}
-              value={(formData as any)[field]}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        ))}
+        <div>
+          <label className="block font-medium">Activité proposée</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="border rounded w-full px-3 py-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block font-medium">Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="border rounded w-full px-3 py-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block font-medium">Date</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            className="border rounded w-full px-3 py-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block font-medium">Heure</label>
+          <input
+            type="time"
+            name="time"
+            value={formData.time}
+            onChange={handleChange}
+            className="border rounded w-full px-3 py-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block font-medium">Localisation</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            className="border rounded w-full px-3 py-2"
+            required
+          />
+        </div>
         <div>
           <label className="block font-medium">Participants max</label>
           <input
             type="number"
             name="maxParticipants"
-            className="border rounded w-full px-3 py-2"
             value={formData.maxParticipants}
             onChange={handleChange}
+            className="border rounded w-full px-3 py-2"
+          />
+        </div>
+        <div>
+          <label className="block font-medium">Organisateur</label>
+          <input
+            type="text"
+            name="organizer"
+            value={formData.organizer}
+            onChange={handleChange}
+            className="border rounded w-full px-3 py-2"
+            required
           />
         </div>
         <button className="bg-[#00553A] hover:bg-[#007C55] text-white px-4 py-2 rounded">
