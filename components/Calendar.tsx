@@ -84,12 +84,10 @@ export default function Calendar() {
 
       {/* Modale d'ajout avec rechargement automatique à la fermeture */}
       <AddActivityModal
-        show={showAddModal}
-        onClose={() => {
-          setShowAddModal(false);
-          fetchActivities(); // 🔁 recharge les données après ajout
-        }}
-      />
+  show={showAddModal}
+  onClose={() => setShowAddModal(false)}
+  onAdd={fetchActivities} // ✅ nouvelle prop à fournir
+/>
     </div>
   );
 }
