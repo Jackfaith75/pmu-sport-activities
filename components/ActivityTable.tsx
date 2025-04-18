@@ -24,12 +24,7 @@ export default function ActivityTable() {
   const fetchActivities = () => {
     fetch('/api/with-registrations')
       .then(res => res.json())
-      .then(data => {
-  const sorted = data.sort((a: Activity, b: Activity) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
-  setActivities(sorted);
-});
+      .then(data => setActivities(data));
   };
 
   useEffect(() => {
@@ -67,7 +62,7 @@ export default function ActivityTable() {
         <thead className="bg-[#00553A] text-white">
           <tr>
             <th className="p-3"></th>
-            <th className="p-3 text-left">Activité</th>
+            <th className="p-3 text-left">Nom</th>
             <th className="p-3 text-left">Date</th>
             <th className="p-3 text-left">Heure</th>
             <th className="p-3 text-left">Lieu</th>
