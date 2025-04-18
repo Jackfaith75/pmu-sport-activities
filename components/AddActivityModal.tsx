@@ -17,6 +17,7 @@ interface Props {
   activity: Activity | null;
   show: boolean;
   onClose: () => void;
+  onAdd: () => void;
   mode?: 'view' | 'edit';
 }
 
