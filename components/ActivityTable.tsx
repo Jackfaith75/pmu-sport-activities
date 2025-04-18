@@ -21,15 +21,19 @@ export default function ActivityTable() {
   const [editMode, setEditMode] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const activitiesPerPage = 6;
+
   const fetchActivities = () => {
     fetch('/api/with-registrations')
       .then(res => res.json())
       .then(data => {
-  const sorted = data.sort((a: Activity, b: Activity) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-  });
-  setActivities(sorted);
-});
+        const sorted = data.sort((a: Activity, b: Activity) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        });
+        setActivities(sorted);
+      });
   };
 
   useEffect(() => {
@@ -48,71 +52,52 @@ export default function ActivityTable() {
     fetchActivities();
   };
 
+  // Pagination calculs
+  const indexOfLast = currentPage * activitiesPerPage;
+  const indexOfFirst = indexOfLast - activitiesPerPage;
+  const currentActivities = activities.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(activities.length / activitiesPerPage);
+
   return (
     <div className="overflow-x-auto mt-6 rounded-lg shadow-md border border-gray-200">
-
       {/* ➕ Bouton Ajouter */}
       <div className="flex justify-end p-4">
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-[#00553A] hover:bg-[#007C55] text-white font-bold px-4 py-2 rounded-full text-lg"
-          title="Ajouter une activité"
+          className="bg-[#00553A] hover:bg-[#007C55] text-white font-semibold text-base px-6 py-3 rounded-md whitespace-nowrap"
         >
           Proposer une activité
         </button>
       </div>
 
       {/* Tableau */}
-      <table className="min-w-full bg-white">
-        <thead className="bg-[#00553A] text-white">
+      <table className="min-w-full text-sm text-left text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-100">
           <tr>
-            <th className="p-3"></th>
-            <th className="p-3 text-left">Activité</th>
-            <th className="p-3 text-left">Date</th>
-            <th className="p-3 text-left">Heure</th>
-            <th className="p-3 text-left">Lieu</th>
-            <th className="p-3 text-left">Participants</th>
-            <th className="p-3 text-left">Organisateur</th>
-            <th className="p-3"></th>
+            <th className="px-6 py-3">Nom</th>
+            <th className="px-6 py-3">Date</th>
+            <th className="px-6 py-3">Heure</th>
+            <th className="px-6 py-3">Lieu</th>
+            <th className="px-6 py-3">Places</th>
+            <th className="px-6 py-3">Action</th>
           </tr>
         </thead>
         <tbody>
-          {activities.map((act) => (
-            <tr
-              key={act.id}
-              className="border-t hover:bg-gray-100 cursor-pointer"
-              onClick={(e) => {
-                const target = e.target as HTMLElement;
-                if (target.closest('button')) return;
-                openModal(act, 'view');
-              }}
-            >
-              <td className="p-3">
-                <button
-                  className="bg-[#00553A] hover:bg-[#007C55] text-white px-3 py-1 rounded text-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openModal(act, 'edit');
-                  }}
-                >
-                  Modifier
-                </button>
+          {currentActivities.map((activity) => (
+            <tr key={activity.id} className="bg-white border-b hover:bg-gray-50">
+              <td className="px-6 py-4 font-medium text-gray-900">{activity.name}</td>
+              <td className="px-6 py-4">{activity.date}</td>
+              <td className="px-6 py-4">{activity.time}</td>
+              <td className="px-6 py-4">{activity.location}</td>
+              <td className="px-6 py-4">
+                {activity.registered} / {activity.maxParticipants}
               </td>
-              <td className="p-3">{act.name}</td>
-              <td className="p-3">{act.date}</td>
-              <td className="p-3">{act.time}</td>
-              <td className="p-3">{act.location}</td>
-              <td className="p-3">{act.registered}/{act.maxParticipants}</td>
-              <td className="p-3">{act.organizer}</td>
-              <td className="p-3">
+              <td className="px-6 py-4">
                 <button
-                  className="bg-[#00553A] hover:bg-[#007C55] text-white px-3 py-1 rounded text-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openModal(act, 'view');
-                  }}
+                  onClick={() => openModal(activity, 'view')}
+                  className="text-blue-600 hover:underline"
                 >
-                  S'inscrire
+                  Voir
                 </button>
               </td>
             </tr>
@@ -120,6 +105,28 @@ export default function ActivityTable() {
         </tbody>
       </table>
 
+      {/* Pagination */}
+      <div className="flex justify-center items-center gap-2 p-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Précédent
+        </button>
+        <span>
+          Page {currentPage} sur {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Suivant
+        </button>
+      </div>
+
+      {/* Modales */}
       <ActivityModal
         activity={selectedActivity}
         show={showModal}
@@ -129,8 +136,7 @@ export default function ActivityTable() {
 
       <AddActivityModal
         show={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAdd={fetchActivities}
+        onClose={handleClose}
       />
     </div>
   );
