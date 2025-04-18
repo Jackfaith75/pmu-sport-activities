@@ -4,7 +4,7 @@ import Modal from './Modal';
 interface Props {
   show: boolean;
   onClose: () => void;
-  onAdd: () => void; // ✅ utilisé pour recharger la liste après ajout
+  onAdd: () => void;
 }
 
 export default function AddActivityModal({ show, onClose, onAdd }: Props) {
@@ -16,9 +16,12 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     location: '',
     maxParticipants: 10,
     organizer: '',
+    recurrence: 'none', // ✅ Nouveau champ
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -33,9 +36,9 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     });
 
     if (res.ok) {
-      alert("Activité ajoutée !");
-      onAdd(); // recharge la liste
-      onClose(); // ferme la modale
+      alert('Activité ajoutée !');
+      onAdd();
+      onClose();
     } else {
       alert("Erreur lors de l'ajout.");
     }
@@ -52,7 +55,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="border rounded w-full px-3 py-2"
+            className="w-full border border-gray-300 rounded px-3 py-2"
             required
           />
         </div>
@@ -62,51 +65,55 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="border rounded w-full px-3 py-2"
+            className="w-full border border-gray-300 rounded px-3 py-2"
             required
           />
         </div>
-        <div>
-          <label className="block font-medium">Date</label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="border rounded w-full px-3 py-2"
-            required
-          />
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <label className="block font-medium">Date</label>
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              required
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block font-medium">Heure</label>
+            <input
+              type="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              required
+            />
+          </div>
         </div>
         <div>
-          <label className="block font-medium">Heure</label>
-          <input
-            type="time"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            className="border rounded w-full px-3 py-2"
-            required
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Localisation</label>
+          <label className="block font-medium">Lieu</label>
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className="border rounded w-full px-3 py-2"
+            className="w-full border border-gray-300 rounded px-3 py-2"
             required
           />
         </div>
         <div>
-          <label className="block font-medium">Participants max</label>
+          <label className="block font-medium">Nombre maximum de participants</label>
           <input
             type="number"
             name="maxParticipants"
             value={formData.maxParticipants}
             onChange={handleChange}
-            className="border rounded w-full px-3 py-2"
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            min={1}
+            required
           />
         </div>
         <div>
@@ -116,16 +123,35 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
             name="organizer"
             value={formData.organizer}
             onChange={handleChange}
-            className="border rounded w-full px-3 py-2"
+            className="w-full border border-gray-300 rounded px-3 py-2"
             required
           />
         </div>
 
+        {/* ✅ Nouveau champ de sélection de récurrence */}
+        <div>
+          <label className="block font-medium">Récurrence</label>
+          <select
+            name="recurrence"
+            value={formData.recurrence}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, recurrence: e.target.value }))
+            }
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          >
+            <option value="none">Aucune</option>
+            <option value="daily">Quotidienne</option>
+            <option value="weekly">Hebdomadaire</option>
+            <option value="biweekly">Tous les 15 jours</option>
+            <option value="monthly">Mensuelle</option>
+          </select>
+        </div>
+
         <button
           type="submit"
-          className="bg-[#00553A] hover:bg-[#007C55] text-white px-4 py-2 rounded"
+          className="bg-[#00553A] hover:bg-[#007C55] text-white px-6 py-3 rounded-md font-semibold w-full"
         >
-          Ajouter
+          Ajouter l'activité
         </button>
       </form>
     </Modal>
