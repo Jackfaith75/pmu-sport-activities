@@ -22,6 +22,8 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     recurrence: 'none',
   });
 
+  const [dateMode, setDateMode] = useState<'definir' | 'precise'>('precise'); // 🎯 mode pour la date
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -80,17 +82,34 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           <div className="flex-1">
             <label className="block font-medium">Date</label>
             <select
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2"
-              required
+              value={dateMode}
+              onChange={(e) => {
+                const mode = e.target.value as 'definir' | 'precise';
+                setDateMode(mode);
+                if (mode === 'definir') {
+                  setFormData(prev => ({ ...prev, date: 'À définir' }));
+                } else {
+                  setFormData(prev => ({ ...prev, date: '' }));
+                }
+              }}
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-2"
             >
-              <option value="">Sélectionnez une date</option>
-              <option value="À définir">⏳ À définir</option>
-              {/* Pas besoin de générer les dates ici */}
+              <option value="precise">Choisir une date précise</option>
+              <option value="definir">⏳ À définir</option>
             </select>
+
+            {dateMode === 'precise' && (
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                required={dateMode === 'precise'}
+              />
+            )}
           </div>
+
           <div className="flex-1">
             <label className="block font-medium">Heure</label>
             <select
