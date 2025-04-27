@@ -30,7 +30,10 @@ export default function ActivityTable() {
     fetch('/api/with-registrations')
       .then(res => res.json())
       .then(data => {
-        const sorted = data.sort((a: Activity, b: Activity) => {
+        const sorted = data.sort((a, b) => {
+          if (a.date === 'À définir' && b.date !== 'À définir') return -1;
+          if (b.date === 'À définir' && a.date !== 'À définir') return 1;
+          if (a.date === 'À définir' && b.date === 'À définir') return 0;
           return new Date(a.date).getTime() - new Date(b.date).getTime();
         });
         setActivities(sorted);
@@ -107,6 +110,7 @@ export default function ActivityTable() {
                   Modifier
                 </button>
               </td>
+
               <td className="p-3">{act.name}</td>
 
               {/* Date */}
