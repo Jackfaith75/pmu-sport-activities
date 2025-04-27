@@ -108,9 +108,17 @@ export default function ActivityTable() {
                 </button>
               </td>
               <td className="p-3">{act.name}</td>
-              <td className="p-3">{act.date}</td>
 
-              {/* ⏳ Heure - avec gestion "À définir" */}
+              {/* Date */}
+              <td className="p-3">
+                {act.date === 'À définir' ? (
+                  <span title="Date à définir">⏳</span>
+                ) : (
+                  act.date
+                )}
+              </td>
+
+              {/* Heure */}
               <td className="p-3">
                 {act.time === 'À définir' ? (
                   <span title="Heure à définir">⏳</span>
