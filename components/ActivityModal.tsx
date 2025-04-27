@@ -24,10 +24,12 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
   const [formData, setFormData] = useState<Activity | null>(null);
   const [participants, setParticipants] = useState<string[]>([]);
   const [fullName, setFullName] = useState('');
+  const [dateMode, setDateMode] = useState<'definir' | 'precise'>('precise');
 
   useEffect(() => {
     if (activity && show) {
       setFormData(activity);
+      setDateMode(activity.date === 'À définir' ? 'definir' : 'precise');
       fetch(`/api/participants?id=${activity.id}`)
         .then(res => res.json())
         .then(data => {
@@ -121,7 +123,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
       </p>
       <p className="mb-4">{formData.description}</p>
 
-      {/* 🔗 Partage lien */}
+      {/* 🔗 Lien partage */}
       <div className="mb-4">
         <p className="text-sm text-gray-600 mb-1">🔗 Lien de partage :</p>
         <div className="flex items-center gap-2">
@@ -143,7 +145,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </div>
       </div>
 
-      {/* Participants */}
+      {/* 👥 Participants */}
       <div className="mb-4">
         <strong>👥 {participants.length} / {formData.maxParticipants} participants</strong>
         <ul className="list-disc pl-5 text-sm mt-1 space-y-1">
@@ -164,7 +166,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </ul>
       </div>
 
-      {/* Formulaire */}
+      {/* 🛠 Formulaire edition / inscription */}
       {mode === 'edit' ? (
         <form onSubmit={handleSubmitEdit} className="space-y-3">
           <div>
@@ -192,16 +194,34 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             <div className="flex-1">
               <label className="block font-medium">Date</label>
               <select
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                required
+                value={dateMode}
+                onChange={(e) => {
+                  const mode = e.target.value as 'definir' | 'precise';
+                  setDateMode(mode);
+                  if (mode === 'definir') {
+                    setFormData(prev => ({ ...prev!, date: 'À définir' }));
+                  } else {
+                    setFormData(prev => ({ ...prev!, date: '' }));
+                  }
+                }}
+                className="w-full border border-gray-300 rounded px-3 py-2 mb-2"
               >
-                <option value="">Sélectionnez une date</option>
-                <option value="À définir">⏳ À définir</option>
+                <option value="precise">Choisir une date précise</option>
+                <option value="definir">⏳ À définir</option>
               </select>
+
+              {dateMode === 'precise' && (
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  required={dateMode === 'precise'}
+                />
+              )}
             </div>
+
             <div className="flex-1">
               <label className="block font-medium">Heure</label>
               <select
@@ -221,6 +241,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
               </select>
             </div>
           </div>
+
           <div>
             <label className="block font-medium">Lieu</label>
             <input
@@ -261,6 +282,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             >
               Enregistrer
             </button>
+
             <button
               type="button"
               onClick={async () => {
