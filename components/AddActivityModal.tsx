@@ -22,7 +22,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     recurrence: 'none',
   });
 
-  const [isDateUndefined, setIsDateUndefined] = useState(false); // ✅ toggle pour "à définir"
+  const [isDateUndefined, setIsDateUndefined] = useState(false); // ✅ Toggle pour date
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -100,7 +100,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           />
         </div>
 
-        {/* Date + Heure */}
+        {/* Date + Toggle */}
         <div className="flex gap-3 items-center">
           <div className="flex-1">
             <label className="block font-medium">Date</label>
@@ -139,6 +139,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
               required
             >
               <option value="">Sélectionnez une heure</option>
+              <option value="À définir">⏳ À définir</option> {/* ✅ Toujours proposer "À définir" */}
               {Array.from({ length: 24 }, (_, i) => (
                 <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
                   {i.toString().padStart(2, '0')}:00
@@ -205,7 +206,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           </select>
         </div>
 
-        {/* Bouton Soumettre */}
+        {/* Bouton Ajouter */}
         <button
           type="submit"
           className="bg-[#00553A] hover:bg-[#007C55] text-white px-6 py-3 rounded-md font-semibold w-full"
