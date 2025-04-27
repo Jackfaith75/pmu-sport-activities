@@ -50,8 +50,8 @@ export default function ActivityTable() {
   const handleClose = () => {
     setShowModal(false);
     setEditMode(false);
-    fetchActivities(); // 🔁 Recharge les activités à chaque fermeture de modal
-    router.reload(); // ⬅️ recharge à la fermeture de la modal
+    fetchActivities();
+    router.reload();
   };
 
   const totalPages = Math.ceil(activities.length / itemsPerPage);
@@ -109,7 +109,16 @@ export default function ActivityTable() {
               </td>
               <td className="p-3">{act.name}</td>
               <td className="p-3">{act.date}</td>
-              <td className="p-3">{act.time}</td>
+
+              {/* ⏳ Heure - avec gestion "À définir" */}
+              <td className="p-3">
+                {act.time === 'À définir' ? (
+                  <span title="Heure à définir">⏳</span>
+                ) : (
+                  act.time
+                )}
+              </td>
+
               <td className="p-3">{act.location}</td>
               <td className="p-3">{act.registered}/{act.maxParticipants}</td>
               <td className="p-3">{act.organizer}</td>
@@ -129,7 +138,7 @@ export default function ActivityTable() {
         </tbody>
       </table>
 
-      {/* Pagination mini */}
+      {/* Pagination légère */}
       <div className="flex justify-center items-center gap-2 py-3 text-xs text-[#00553A]">
         <button
           className="text-[#00553A] disabled:text-gray-300 hover:underline"
@@ -162,13 +171,13 @@ export default function ActivityTable() {
       <ActivityModal
         activity={selectedActivity}
         show={showModal}
-        onClose={handleClose} // 🔁 met à jour après modif
+        onClose={handleClose}
         mode={editMode ? 'edit' : 'view'}
       />
       <AddActivityModal
         show={showAddModal}
         onClose={() => setShowAddModal(false)}
-        onAdd={fetchActivities} // 🔁 met à jour après ajout
+        onAdd={fetchActivities}
       />
     </div>
   );
