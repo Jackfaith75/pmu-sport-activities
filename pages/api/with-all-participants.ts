@@ -1,24 +1,27 @@
 // /pages/api/with-all-participants.ts
-
 import type { NextApiRequest, NextApiResponse } from 'next';
+import activities from '../../data/activities.json';
 
-// Importe ta logique de récupération d'activités et de participants
-import { getAllActivities, getParticipantsByActivityId } from '../../lib/database'; // ✅ à créer dans lib/database.ts
+// ➡️ Stockage des participants en mémoire
+let participants: { activityId: string, fullName: string }[] = [];
+
+// Charger en mémoire existante (si besoin un jour)
+try {
+  participants = require('../../data/registrations.json');
+} catch (error) {
+  participants = [];
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const activities = await getAllActivities();
-
-    const allData = await Promise.all(
-      activities.map(async (activity) => {
-        const participants = await getParticipantsByActivityId(activity.id);
-        return {
-          activityId: activity.id,
-          activityName: activity.name,
-          participants: participants
-        };
-      })
-    );
+    const allData = activities.map((activity) => {
+      const activityParticipants = participants.filter((p) => p.activityId === activity.id);
+      return {
+        activityId: activity.id,
+        activityName: activity.name,
+        participants: activityParticipants
+      };
+    });
 
     res.status(200).json(allData);
   } catch (error) {
@@ -26,4 +29,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(500).json({ error: 'Erreur serveur' });
   }
 }
-
