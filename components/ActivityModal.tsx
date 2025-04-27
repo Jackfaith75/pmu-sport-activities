@@ -116,12 +116,12 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
     <Modal show={show} onClose={onClose}>
       <h2 className="text-xl font-bold mb-2">{formData.name}</h2>
       <p className="text-sm text-gray-600 mb-2">
-        📍 {formData.location} | 🗓️ {formData.date}
+        📍 {formData.location} | 🗓️ {formData.date !== 'À définir' ? formData.date : '⏳ Date à définir'}
         {formData.time && formData.time !== 'À définir' && ` à ${formData.time}`}
       </p>
       <p className="mb-4">{formData.description}</p>
 
-      {/* 🔗 Lien de partage */}
+      {/* 🔗 Partage lien */}
       <div className="mb-4">
         <p className="text-sm text-gray-600 mb-1">🔗 Lien de partage :</p>
         <div className="flex items-center gap-2">
@@ -143,7 +143,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </div>
       </div>
 
-      {/* 👥 Liste participants */}
+      {/* Participants */}
       <div className="mb-4">
         <strong>👥 {participants.length} / {formData.maxParticipants} participants</strong>
         <ul className="list-disc pl-5 text-sm mt-1 space-y-1">
@@ -164,7 +164,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </ul>
       </div>
 
-      {/* 🛠 Formulaire Edition OU Inscription */}
+      {/* Formulaire */}
       {mode === 'edit' ? (
         <form onSubmit={handleSubmitEdit} className="space-y-3">
           <div>
@@ -191,14 +191,16 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
           <div className="flex gap-3">
             <div className="flex-1">
               <label className="block font-medium">Date</label>
-              <input
-                className="border rounded w-full px-3 py-2"
-                type="date"
+              <select
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
+                className="w-full border border-gray-300 rounded px-3 py-2"
                 required
-              />
+              >
+                <option value="">Sélectionnez une date</option>
+                <option value="À définir">⏳ À définir</option>
+              </select>
             </div>
             <div className="flex-1">
               <label className="block font-medium">Heure</label>
@@ -220,7 +222,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             </div>
           </div>
           <div>
-            <label className="block font-medium">Localisation</label>
+            <label className="block font-medium">Lieu</label>
             <input
               className="border rounded w-full px-3 py-2"
               type="text"
@@ -259,7 +261,6 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             >
               Enregistrer
             </button>
-
             <button
               type="button"
               onClick={async () => {
