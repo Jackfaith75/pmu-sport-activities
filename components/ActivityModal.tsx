@@ -24,12 +24,12 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
   const [formData, setFormData] = useState<Activity | null>(null);
   const [participants, setParticipants] = useState<string[]>([]);
   const [fullName, setFullName] = useState('');
-  const [dateMode, setDateMode] = useState<'definir' | 'precise'>('precise');
+  const [isDateUndefined, setIsDateUndefined] = useState(false);
 
   useEffect(() => {
     if (activity && show) {
       setFormData(activity);
-      setDateMode(activity.date === 'À définir' ? 'definir' : 'precise');
+      setIsDateUndefined(activity.date === 'À définir');
       fetch(`/api/participants?id=${activity.id}`)
         .then(res => res.json())
         .then(data => {
@@ -43,6 +43,26 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
     const { name, value } = e.target;
     if (!formData) return;
     setFormData((prev) => ({ ...prev!, [name]: value }));
+  };
+
+  const handleToggleDateUndefined = () => {
+    setIsDateUndefined(prev => {
+      const newValue = !prev;
+      if (newValue) {
+        setFormData(prevForm => ({
+          ...prevForm!,
+          date: 'À définir',
+          time: 'À définir',
+        }));
+      } else {
+        setFormData(prevForm => ({
+          ...prevForm!,
+          date: '',
+          time: '',
+        }));
+      }
+      return newValue;
+    });
   };
 
   const handleSubmitEdit = async (e: any) => {
@@ -118,12 +138,12 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
     <Modal show={show} onClose={onClose}>
       <h2 className="text-xl font-bold mb-2">{formData.name}</h2>
       <p className="text-sm text-gray-600 mb-2">
-        📍 {formData.location} | 🗓️ {formData.date !== 'À définir' ? formData.date : '⏳ Date à définir'}
+        📍 {formData.location} | 🗓️ {formData.date !== 'À définir' ? formData.date : '⏳ À définir'}
         {formData.time && formData.time !== 'À définir' && ` à ${formData.time}`}
       </p>
       <p className="mb-4">{formData.description}</p>
 
-      {/* 🔗 Lien partage */}
+      {/* Partage lien */}
       <div className="mb-4">
         <p className="text-sm text-gray-600 mb-1">🔗 Lien de partage :</p>
         <div className="flex items-center gap-2">
@@ -145,7 +165,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </div>
       </div>
 
-      {/* 👥 Participants */}
+      {/* Liste Participants */}
       <div className="mb-4">
         <strong>👥 {participants.length} / {formData.maxParticipants} participants</strong>
         <ul className="list-disc pl-5 text-sm mt-1 space-y-1">
@@ -166,9 +186,9 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </ul>
       </div>
 
-      {/* 🛠 Formulaire edition / inscription */}
+      {/* Edition / Inscription */}
       {mode === 'edit' ? (
-        <form onSubmit={handleSubmitEdit} className="space-y-3">
+        <form onSubmit={handleSubmitEdit} className="space-y-4">
           <div>
             <label className="block font-medium">Activité proposée</label>
             <input
@@ -180,6 +200,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
               required
             />
           </div>
+
           <div>
             <label className="block font-medium">Description</label>
             <textarea
@@ -190,39 +211,34 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
               required
             />
           </div>
-          <div className="flex gap-3">
+
+          <div className="flex gap-3 items-center">
             <div className="flex-1">
               <label className="block font-medium">Date</label>
-              <select
-                value={dateMode}
-                onChange={(e) => {
-                  const mode = e.target.value as 'definir' | 'precise';
-                  setDateMode(mode);
-                  if (mode === 'definir') {
-                    setFormData(prev => ({ ...prev!, date: 'À définir' }));
-                  } else {
-                    setFormData(prev => ({ ...prev!, date: '' }));
-                  }
-                }}
-                className="w-full border border-gray-300 rounded px-3 py-2 mb-2"
-              >
-                <option value="precise">Choisir une date précise</option>
-                <option value="definir">⏳ À définir</option>
-              </select>
-
-              {dateMode === 'precise' && (
-                <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                  required={dateMode === 'precise'}
-                />
-              )}
+              <input
+                type="date"
+                name="date"
+                value={isDateUndefined ? '' : formData.date}
+                onChange={handleChange}
+                disabled={isDateUndefined}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                required={!isDateUndefined}
+              />
             </div>
+            <div className="flex items-center mt-6">
+              <input
+                type="checkbox"
+                id="undefinedDateEdit"
+                checked={isDateUndefined}
+                onChange={handleToggleDateUndefined}
+                className="mr-2"
+              />
+              <label htmlFor="undefinedDateEdit" className="text-sm">À définir</label>
+            </div>
+          </div>
 
-            <div className="flex-1">
+          {!isDateUndefined && (
+            <div>
               <label className="block font-medium">Heure</label>
               <select
                 name="time"
@@ -232,7 +248,6 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
                 required
               >
                 <option value="">Sélectionnez une heure</option>
-                <option value="À définir">⏳ À définir</option>
                 {Array.from({ length: 24 }, (_, i) => (
                   <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
                     {i.toString().padStart(2, '0')}:00
@@ -240,7 +255,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
                 ))}
               </select>
             </div>
-          </div>
+          )}
 
           <div>
             <label className="block font-medium">Lieu</label>
@@ -253,6 +268,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
               required
             />
           </div>
+
           <div>
             <label className="block font-medium">Organisateur</label>
             <input
@@ -264,6 +280,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
               required
             />
           </div>
+
           <div>
             <label className="block font-medium">Participants max</label>
             <input
@@ -275,37 +292,12 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             />
           </div>
 
-          <div className="flex justify-between items-center mt-6">
-            <button
-              type="submit"
-              className="bg-[#00553A] hover:bg-[#007C55] text-white px-4 py-2 rounded"
-            >
-              Enregistrer
-            </button>
-
-            <button
-              type="button"
-              onClick={async () => {
-                if (!confirm("Confirmer la suppression de cette activité ?")) return;
-
-                const res = await fetch('/api/delete-activity', {
-                  method: 'DELETE',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ id: formData.id })
-                });
-
-                if (res.ok) {
-                  alert("Activité supprimée !");
-                  onClose();
-                } else {
-                  alert("Erreur lors de la suppression.");
-                }
-              }}
-              className="bg-[#00553A] hover:bg-[#007C55] text-white px-4 py-2 rounded"
-            >
-              Supprimer l’activité
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="bg-[#00553A] hover:bg-[#007C55] text-white px-6 py-3 rounded-md font-semibold w-full"
+          >
+            Enregistrer
+          </button>
         </form>
       ) : (
         participants.length >= formData.maxParticipants ? (
