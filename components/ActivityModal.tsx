@@ -52,13 +52,13 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         setFormData(prevForm => ({
           ...prevForm!,
           date: 'À définir',
-          time: 'À définir',
+          time: 'À définir'
         }));
       } else {
         setFormData(prevForm => ({
           ...prevForm!,
           date: '',
-          time: '',
+          time: ''
         }));
       }
       return newValue;
@@ -143,7 +143,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
       </p>
       <p className="mb-4">{formData.description}</p>
 
-      {/* Partage lien */}
+      {/* 🔗 Partage lien */}
       <div className="mb-4">
         <p className="text-sm text-gray-600 mb-1">🔗 Lien de partage :</p>
         <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </div>
       </div>
 
-      {/* Liste Participants */}
+      {/* Participants */}
       <div className="mb-4">
         <strong>👥 {participants.length} / {formData.maxParticipants} participants</strong>
         <ul className="list-disc pl-5 text-sm mt-1 space-y-1">
@@ -189,6 +189,8 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
       {/* Edition / Inscription */}
       {mode === 'edit' ? (
         <form onSubmit={handleSubmitEdit} className="space-y-4">
+
+          {/* Nom */}
           <div>
             <label className="block font-medium">Activité proposée</label>
             <input
@@ -201,6 +203,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             />
           </div>
 
+          {/* Description */}
           <div>
             <label className="block font-medium">Description</label>
             <textarea
@@ -212,6 +215,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             />
           </div>
 
+          {/* Date + Toggle */}
           <div className="flex gap-3 items-center">
             <div className="flex-1">
               <label className="block font-medium">Date</label>
@@ -225,6 +229,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
                 required={!isDateUndefined}
               />
             </div>
+
             <div className="flex items-center mt-6">
               <input
                 type="checkbox"
@@ -237,6 +242,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             </div>
           </div>
 
+          {/* Heure */}
           {!isDateUndefined && (
             <div>
               <label className="block font-medium">Heure</label>
@@ -248,6 +254,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
                 required
               >
                 <option value="">Sélectionnez une heure</option>
+                <option value="À définir">⏳ À définir</option> {/* ✅ Toujours possible */}
                 {Array.from({ length: 24 }, (_, i) => (
                   <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
                     {i.toString().padStart(2, '0')}:00
@@ -257,6 +264,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             </div>
           )}
 
+          {/* Lieu */}
           <div>
             <label className="block font-medium">Lieu</label>
             <input
@@ -269,6 +277,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             />
           </div>
 
+          {/* Organisateur */}
           <div>
             <label className="block font-medium">Organisateur</label>
             <input
@@ -281,6 +290,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             />
           </div>
 
+          {/* Participants Max */}
           <div>
             <label className="block font-medium">Participants max</label>
             <input
@@ -292,12 +302,14 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
             />
           </div>
 
+          {/* Bouton enregistrer */}
           <button
             type="submit"
             className="bg-[#00553A] hover:bg-[#007C55] text-white px-6 py-3 rounded-md font-semibold w-full"
           >
             Enregistrer
           </button>
+
         </form>
       ) : (
         participants.length >= formData.maxParticipants ? (
