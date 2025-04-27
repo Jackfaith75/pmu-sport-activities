@@ -79,14 +79,17 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
         <div className="flex gap-3">
           <div className="flex-1">
             <label className="block font-medium">Date</label>
-            <input
-              type="date"
+            <select
               name="date"
               value={formData.date}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded px-3 py-2"
               required
-            />
+            >
+              <option value="">Sélectionnez une date</option>
+              <option value="À définir">⏳ À définir</option>
+              {/* Pas besoin de générer les dates ici */}
+            </select>
           </div>
           <div className="flex-1">
             <label className="block font-medium">Heure</label>
