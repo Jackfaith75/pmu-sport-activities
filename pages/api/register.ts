@@ -1,35 +1,52 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 
-const regPath = path.join(process.cwd(), 'data', 'registrations.json');
-const actPath = path.join(process.cwd(), 'data', 'activities.json');
+const registrationsFilePath = path.join(process.cwd(), 'data', 'registrations.json');
 
-export default function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+// Fonction pour lire les inscriptions existantes
+const getRegistrations = () => {
+  try {
+    const data = fs.readFileSync(registrationsFilePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+};
+
+// Fonction pour sauvegarder les inscriptions
+const saveRegistrations = (registrations: any) => {
+  fs.writeFileSync(registrationsFilePath, JSON.stringify(registrations, null, 2));
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    res.status(405).end(); // Method Not Allowed
+    return;
+  }
 
   const { activityId, fullName } = req.body;
 
-  const registrations = fs.existsSync(regPath)
-    ? JSON.parse(fs.readFileSync(regPath, 'utf-8'))
-    : [];
-
-  const exists = registrations.find(r => r.activityId === activityId && r.fullName === fullName);
-  if (exists) return res.status(400).json({ message: 'Déjà inscrit' });
-
-  // Ajouter l'inscription
-  registrations.push({ activityId, fullName });
-  fs.writeFileSync(regPath, JSON.stringify(registrations, null, 2));
-
-  // 🔁 Mettre à jour le nombre d'inscrits dans activities.json
-  const activities = fs.existsSync(actPath)
-    ? JSON.parse(fs.readFileSync(actPath, 'utf-8'))
-    : [];
-
-  const index = activities.findIndex(a => a.id === activityId);
-  if (index !== -1) {
-    activities[index].registered = (activities[index].registered || 0) + 1;
-    fs.writeFileSync(actPath, JSON.stringify(activities, null, 2));
+  if (!activityId || !fullName) {
+    res.status(400).json({ message: 'activityId et fullName sont requis' });
+    return;
   }
 
-  res.status(200).json({ message: 'Inscription réussie' });
+  // Charger les inscriptions existantes
+  const registrations = getRegistrations();
+
+  // Vérifier que l'utilisateur n'est pas déjà inscrit
+  const alreadyRegistered = registrations.some((r: any) => r.activityId === activityId && r.fullName === fullName);
+  if (alreadyRegistered) {
+    return res.status(409).json({ message: 'Déjà inscrit à cette activité' });
+  }
+
+  // Ajouter l'inscription
+  const newRegistration = { activityId, fullName };
+  registrations.push(newRegistration);
+
+  // Sauvegarder dans le fichier
+  saveRegistrations(registrations);
+
+  res.status(201).json({ message: 'Inscription réussie !' });
 }
