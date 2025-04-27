@@ -22,13 +22,33 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     recurrence: 'none',
   });
 
-  const [dateMode, setDateMode] = useState<'definir' | 'precise'>('precise'); // 🎯 mode pour la date
+  const [isDateUndefined, setIsDateUndefined] = useState(false); // ✅ toggle pour "à définir"
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleToggleDateUndefined = () => {
+    setIsDateUndefined(prev => {
+      const newValue = !prev;
+      if (newValue) {
+        setFormData(prevForm => ({
+          ...prevForm,
+          date: 'À définir',
+          time: 'À définir'
+        }));
+      } else {
+        setFormData(prevForm => ({
+          ...prevForm,
+          date: '',
+          time: ''
+        }));
+      }
+      return newValue;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,6 +74,8 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
     <Modal show={show} onClose={onClose}>
       <h2 className="text-lg font-bold mb-4">Ajouter une activité</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+
+        {/* Nom */}
         <div>
           <label className="block font-medium">Activité proposée</label>
           <input
@@ -66,6 +88,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           />
         </div>
 
+        {/* Description */}
         <div>
           <label className="block font-medium">Description</label>
           <textarea
@@ -78,39 +101,35 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
         </div>
 
         {/* Date + Heure */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           <div className="flex-1">
             <label className="block font-medium">Date</label>
-            <select
-              value={dateMode}
-              onChange={(e) => {
-                const mode = e.target.value as 'definir' | 'precise';
-                setDateMode(mode);
-                if (mode === 'definir') {
-                  setFormData(prev => ({ ...prev, date: 'À définir' }));
-                } else {
-                  setFormData(prev => ({ ...prev, date: '' }));
-                }
-              }}
-              className="w-full border border-gray-300 rounded px-3 py-2 mb-2"
-            >
-              <option value="precise">Choisir une date précise</option>
-              <option value="definir">⏳ À définir</option>
-            </select>
-
-            {dateMode === 'precise' && (
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                required={dateMode === 'precise'}
-              />
-            )}
+            <input
+              type="date"
+              name="date"
+              value={isDateUndefined ? '' : formData.date}
+              onChange={handleChange}
+              disabled={isDateUndefined}
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              required={!isDateUndefined}
+            />
           </div>
 
-          <div className="flex-1">
+          <div className="flex items-center mt-6">
+            <input
+              type="checkbox"
+              id="undefinedDate"
+              checked={isDateUndefined}
+              onChange={handleToggleDateUndefined}
+              className="mr-2"
+            />
+            <label htmlFor="undefinedDate" className="text-sm">À définir</label>
+          </div>
+        </div>
+
+        {/* Heure */}
+        {!isDateUndefined && (
+          <div>
             <label className="block font-medium">Heure</label>
             <select
               name="time"
@@ -120,7 +139,6 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
               required
             >
               <option value="">Sélectionnez une heure</option>
-              <option value="À définir">⏳ À définir</option>
               {Array.from({ length: 24 }, (_, i) => (
                 <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
                   {i.toString().padStart(2, '0')}:00
@@ -128,8 +146,9 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
               ))}
             </select>
           </div>
-        </div>
+        )}
 
+        {/* Lieu */}
         <div>
           <label className="block font-medium">Lieu</label>
           <input
@@ -142,6 +161,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           />
         </div>
 
+        {/* Nombre Participants */}
         <div>
           <label className="block font-medium">Nombre maximum de participants</label>
           <input
@@ -155,6 +175,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           />
         </div>
 
+        {/* Organisateur */}
         <div>
           <label className="block font-medium">Organisateur</label>
           <input
@@ -167,6 +188,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           />
         </div>
 
+        {/* Récurrence */}
         <div>
           <label className="block font-medium">Récurrence</label>
           <select
@@ -183,6 +205,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           </select>
         </div>
 
+        {/* Bouton Soumettre */}
         <button
           type="submit"
           className="bg-[#00553A] hover:bg-[#007C55] text-white px-6 py-3 rounded-md font-semibold w-full"
