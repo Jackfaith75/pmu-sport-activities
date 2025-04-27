@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router'; // ✅ Ajout du router pour reload
+import { useRouter } from 'next/router';
 import Modal from './Modal';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function AddActivityModal({ show, onClose, onAdd }: Props) {
-  const router = useRouter(); // ✅ Instanciation du router
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -23,7 +23,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -40,9 +40,9 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
 
     if (res.ok) {
       alert('Activité ajoutée !');
-      onAdd(); // Optionnel si tu veux relancer un fetch local
-      onClose(); // Ferme la modal
-      router.reload(); // ✅ Recharge toute la page
+      onAdd();
+      onClose();
+      router.reload();
     } else {
       alert("Erreur lors de l'ajout.");
     }
@@ -51,7 +51,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
   return (
     <Modal show={show} onClose={onClose}>
       <h2 className="text-lg font-bold mb-4">Ajouter une activité</h2>
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-medium">Activité proposée</label>
           <input
@@ -63,6 +63,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
             required
           />
         </div>
+
         <div>
           <label className="block font-medium">Description</label>
           <textarea
@@ -73,6 +74,8 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
             required
           />
         </div>
+
+        {/* Date + Heure */}
         <div className="flex gap-3">
           <div className="flex-1">
             <label className="block font-medium">Date</label>
@@ -87,16 +90,24 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           </div>
           <div className="flex-1">
             <label className="block font-medium">Heure</label>
-            <input
-              type="time"
+            <select
               name="time"
               value={formData.time}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded px-3 py-2"
               required
-            />
+            >
+              <option value="">Sélectionnez une heure</option>
+              <option value="À définir">⏳ À définir</option>
+              {Array.from({ length: 24 }, (_, i) => (
+                <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
+                  {i.toString().padStart(2, '0')}:00
+                </option>
+              ))}
+            </select>
           </div>
         </div>
+
         <div>
           <label className="block font-medium">Lieu</label>
           <input
@@ -108,6 +119,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
             required
           />
         </div>
+
         <div>
           <label className="block font-medium">Nombre maximum de participants</label>
           <input
@@ -120,6 +132,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
             required
           />
         </div>
+
         <div>
           <label className="block font-medium">Organisateur</label>
           <input
@@ -137,9 +150,7 @@ export default function AddActivityModal({ show, onClose, onAdd }: Props) {
           <select
             name="recurrence"
             value={formData.recurrence}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, recurrence: e.target.value }))
-            }
+            onChange={handleChange}
             className="w-full border border-gray-300 rounded px-3 py-2"
           >
             <option value="none">Aucune</option>
