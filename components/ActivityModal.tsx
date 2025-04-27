@@ -116,11 +116,12 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
     <Modal show={show} onClose={onClose}>
       <h2 className="text-xl font-bold mb-2">{formData.name}</h2>
       <p className="text-sm text-gray-600 mb-2">
-        📍 {formData.location} | 🗓️ {formData.date} à {formData.time}
+        📍 {formData.location} | 🗓️ {formData.date}
+        {formData.time && formData.time !== 'À définir' && ` à ${formData.time}`}
       </p>
       <p className="mb-4">{formData.description}</p>
 
-      {/* ✅ Bloc partage */}
+      {/* 🔗 Lien de partage */}
       <div className="mb-4">
         <p className="text-sm text-gray-600 mb-1">🔗 Lien de partage :</p>
         <div className="flex items-center gap-2">
@@ -142,6 +143,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </div>
       </div>
 
+      {/* 👥 Liste participants */}
       <div className="mb-4">
         <strong>👥 {participants.length} / {formData.maxParticipants} participants</strong>
         <ul className="list-disc pl-5 text-sm mt-1 space-y-1">
@@ -162,6 +164,7 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
         </ul>
       </div>
 
+      {/* 🛠 Formulaire Edition OU Inscription */}
       {mode === 'edit' ? (
         <form onSubmit={handleSubmitEdit} className="space-y-3">
           <div>
@@ -185,27 +188,36 @@ export default function ActivityModal({ activity, show, onClose, mode = 'view' }
               required
             />
           </div>
-          <div>
-            <label className="block font-medium">Date</label>
-            <input
-              className="border rounded w-full px-3 py-2"
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-medium">Heure</label>
-            <input
-              className="border rounded w-full px-3 py-2"
-              type="time"
-              name="time"
-              value={formData.time}
-              onChange={handleChange}
-              required
-            />
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="block font-medium">Date</label>
+              <input
+                className="border rounded w-full px-3 py-2"
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block font-medium">Heure</label>
+              <select
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                required
+              >
+                <option value="">Sélectionnez une heure</option>
+                <option value="À définir">⏳ À définir</option>
+                {Array.from({ length: 24 }, (_, i) => (
+                  <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
+                    {i.toString().padStart(2, '0')}:00
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div>
             <label className="block font-medium">Localisation</label>
