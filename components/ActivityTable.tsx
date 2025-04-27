@@ -146,7 +146,7 @@ export default function ActivityTable() {
         </tbody>
       </table>
 
-      {/* Pagination légère */}
+      {/* Pagination */}
       <div className="flex justify-center items-center gap-2 py-3 text-xs text-[#00553A]">
         <button
           className="text-[#00553A] disabled:text-gray-300 hover:underline"
